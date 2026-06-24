@@ -1,0 +1,418 @@
+is wale text notes se mast smj aa jata h 
+nice explaination by gpt:
+
+
+
+This is the **most confusing concept** for every React beginner. The problem is that people explain **what `useEffect` does**, but not **why React needed it**.
+
+Let's understand the **logic**, not just the syntax.
+
+---
+
+# Step 1: How React works
+
+Suppose you have this component:
+
+                ```jsx
+                function App() {
+
+                console.log("Component Rendered");
+
+                return <h1>Hello</h1>;
+                }
+                ```
+
+When the page opens,
+
+                    ```
+                    App() runs
+                        ↓
+                    React creates UI
+                        ↓
+                    Screen shows "Hello"
+                    ```
+
+So remember:
+
+> **A React component is just a function.**
+
+Every time React renders, it **calls the function again.**
+
+---
+
+# Step 2: When state changes
+
+                    ```jsx
+                    const [count, setCount] = useState(0);
+                    ```
+
+                    Button:
+
+                    ```jsx
+                    <button onClick={() => setCount(count + 1)}>
+                        Increase
+                    </button>
+                    ```
+
+When you click,
+
+                    ```
+                    setCount()
+                        ↓
+                    State changes
+                        ↓
+                    React calls App() again
+                        ↓
+                    UI updates
+                    ```
+
+So every state update means
+
+```
+App() runs again
+```
+
+---
+
+# Step 3: Imagine fetching API directly
+
+Suppose you write
+
+                    ```jsx
+                    function App() {
+
+                        axios.get("https://jsonplaceholder.typicode.com/users")
+                            .then(res => console.log(res.data));
+
+                        return <h1>Hello</h1>;
+                    }
+                    ```
+
+What happens?
+
+                    Page opens
+
+                    ```
+                    App()
+                    ↓
+                    API Call
+                    ↓
+                    Render
+                    ```
+
+Looks fine.
+
+But now suppose some state changes.
+
+                        ```
+                        Button Click
+                            ↓
+                        setState()
+                            ↓
+                        App() runs AGAIN
+                            ↓
+                        API Call AGAIN
+                        ```
+
+                        Again.
+
+                        Again.
+
+                        Again.
+
+Every render calls the API.
+
+                This is a huge problem.
+
+---
+
+# React wanted to separate two things
+
+There are two kinds of code.
+
+### 1. Rendering code
+
+                ```jsx
+                return (
+                    <h1>Hello</h1>
+                )
+                ```
+
+Its job is only
+
+                    ```
+                    Create UI
+                    ```
+
+---
+
+### 2. Side Effect code
+
+Like
+
+* API call
+* Local Storage
+* Timer
+* Event Listener
+
+These are **not part of creating the UI**.
+
+React says
+
+> "Don't mix these with rendering."
+
+Instead write them inside
+
+```jsx
+useEffect()
+```
+
+---
+
+# So what does useEffect actually say?
+
+Think of it like this.
+
+```
+Render the UI first.
+
+After rendering,
+
+run this extra code.
+```
+
+That's literally what `useEffect` means.
+
+---
+
+# Example
+
+```jsx
+function App(){
+
+    useEffect(()=>{
+        console.log("API Call");
+    },[])
+
+    return <h1>Hello</h1>
+}
+```
+
+Execution order
+
+```
+App() starts
+      ↓
+React creates UI
+      ↓
+UI appears
+      ↓
+useEffect runs
+```
+
+                                            Notice
+
+                                            UI first.
+
+                                            Effect later.
+
+---
+-----------------------------------------------------------------------------------------------
+
+# Why not just call API directly?
+
+Imagine this.
+
+                    ```jsx
+                    function App(){
+
+                        const [users,setUsers]=useState([])
+
+                        axios.get(url)
+                            .then(res=>setUsers(res.data))
+
+                        return (...)
+                    }
+                    ```
+
+Let's see the flow.
+
+```
+                        App()
+                            ↓
+                        API Call
+                            ↓
+                        setUsers()
+                            ↓
+                        State Changed
+                            ↓
+                        App() Again
+                            ↓
+                        API Again
+                            ↓
+                        setUsers()
+                            ↓
+                        App() Again
+                        ```
+
+                        ```
+                        ∞ Infinite Loop
+                        ```
+
+That's why React says
+
+**Never do side effects during rendering.**
+
+---
+
+# useEffect prevents this
+
+                        ```jsx
+                        useEffect(()=>{
+
+                            axios.get(url)
+                                .then(res=>setUsers(res.data))
+
+                        },[])
+                        ```
+
+Now
+
+                            ```
+                            App()
+                                ↓
+                            Render UI
+                                ↓
+                            useEffect
+                                ↓
+                            API
+                                ↓
+                            setUsers()
+                                ↓
+                            Render Again
+                            ```
+
+But notice
+
+```
+Dependency array = []
+```
+
+means
+
+```
+Don't run the effect again.
+```
+
+So only one API call happens.
+
+---
+
+# What is the dependency array?
+
+Imagine React asking
+
+```
+"When should I run this effect?"
+```
+
+### No dependency array
+
+```jsx
+useEffect(()=>{
+   console.log("Hello")
+})
+```
+
+React says
+
+```
+Every render.
+```
+
+---
+
+### Empty array
+
+```jsx
+useEffect(()=>{
+   console.log("Hello")
+},[])
+```
+
+React says
+
+```
+Only first render.
+```
+
+---
+
+### With dependency
+
+```jsx
+useEffect(()=>{
+   console.log("Count Changed")
+},[count])
+```
+
+React says
+
+```
+Run only if count changes.
+```
+
+---
+
+# Real-life Analogy
+
+Imagine you're cooking.
+
+Making the plate
+
+```
+🍽️
+Rice
+Dal
+Salad
+```
+
+is the **rendering**.
+
+After the plate is ready,
+
+you
+
+* take a photo 📸
+* send it to Instagram
+* save it in gallery
+
+These are **extra tasks**.
+
+React calls these **Effects**.
+
+So
+
+```
+Prepare Plate
+      ↓
+Now do extra work
+```
+
+Exactly like
+
+```
+Render UI
+      ↓
+Run useEffect
+```
+
+---
+
+# One sentence to remember forever
+
+> **Rendering is for creating the UI. `useEffect` is for doing work after the UI has been rendered.**
+
+---
+
+Since you've just learned **Axios**, I can also explain **why 90% of API calls in React are written inside `useEffect`** with a timeline diagram that makes the execution order crystal clear.

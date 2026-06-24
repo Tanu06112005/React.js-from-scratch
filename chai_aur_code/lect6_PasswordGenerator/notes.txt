@@ -1,0 +1,471 @@
+----------------------------useCallBack hook-------------------------------------------
+
+
+Of course! Let's understand **`useCallback`** in the easiest way possible.
+
+---
+
+# First, forget about `useCallback`.
+
+Let's understand the **problem** first.
+
+Suppose you have this component:
+
+```jsx
+function App() {
+  const [count, setCount] = useState(0);
+
+  const sayHello = () => {
+    console.log("Hello");
+  };
+
+  return (
+    <>
+      <button onClick={() => setCount(count + 1)}>
+        Increment
+      </button>
+    </>
+  );
+}
+```
+
+Now imagine you click **Increment**.
+
+What happens?
+
+### Step 1
+
+`count` changes.
+
+```
+count = 1
+```
+
+### Step 2
+
+React re-renders the component.
+
+It **runs the whole App function again**.
+
+```
+App()
+```
+
+runs again from top to bottom.
+
+---
+
+During this new render,
+
+```jsx
+const sayHello = () => {
+  console.log("Hello");
+};
+```
+
+is executed again.
+
+So React creates a **brand new function**.
+
+---
+
+### First render
+
+```
+sayHello → Function A
+```
+
+---
+
+### Second render
+
+```
+sayHello → Function B
+```
+
+---
+
+### Third render
+
+```
+sayHello → Function C
+```
+
+Even though the code is the same,
+
+React sees
+
+```
+Function A ≠ Function B
+```
+
+because they are different objects in memory.
+
+---
+
+# Why is this bad?
+
+Suppose you pass this function to a child component.
+
+```jsx
+<Child sayHello={sayHello} />
+```
+
+Now imagine your child component is:
+
+```jsx
+const Child = React.memo(({ sayHello }) => {
+  console.log("Child Render");
+
+  return <button onClick={sayHello}>Hello</button>;
+});
+```
+
+`React.memo()` means:
+
+> "Only render me if my props change."
+
+---
+
+### First render
+
+```
+Parent
+
+↓
+
+sayHello → Function A
+
+↓
+
+Child receives Function A
+
+↓
+
+Child renders
+```
+
+---
+
+### Click Increment
+
+Parent renders again.
+
+```
+sayHello → Function B
+```
+
+Child now receives
+
+```
+Function B
+```
+
+React compares
+
+```
+Old Function A
+New Function B
+```
+
+They are different.
+
+So React thinks
+
+> "Props changed."
+
+Therefore
+
+```
+Child renders AGAIN
+```
+
+Even though the function does the **exact same thing**.
+
+---
+
+# So what's the solution?
+
+We tell React:
+
+> "Please don't create a new function every time."
+
+That's exactly what `useCallback` does.
+
+---
+
+Instead of
+
+```jsx
+const sayHello = () => {
+  console.log("Hello");
+};
+```
+
+write
+
+```jsx
+const sayHello = useCallback(() => {
+  console.log("Hello");
+}, []);
+```
+
+Now React remembers this function.
+
+---
+
+### First render
+
+```
+sayHello → Function A
+```
+
+---
+
+### Second render
+
+```
+sayHello → Function A
+```
+
+---
+
+### Third render
+
+```
+sayHello → Function A
+```
+
+Same function every time.
+
+---
+
+Now React compares
+
+```
+Old Function A
+New Function A
+```
+
+They are the same.
+
+So React says
+
+> "Nothing changed."
+
+Child **doesn't render again**.
+
+---
+
+# Real-Life Analogy 📱
+
+Imagine you have a phone number.
+
+Without `useCallback`:
+
+Every day you give your friend a **new phone number**.
+
+```
+Monday   → 9876543210
+Tuesday  → 9123456789
+Wednesday→ 9988776655
+```
+
+Your friend has to update your contact every day.
+
+---
+
+With `useCallback`:
+
+You keep using the **same phone number**.
+
+```
+Monday    → 9876543210
+Tuesday   → 9876543210
+Wednesday → 9876543210
+```
+
+Your friend doesn't need to update anything.
+
+---
+
+# Another Example
+
+Imagine a teacher asks:
+
+> "Who is the class monitor?"
+
+Without `useCallback`:
+
+Every period, you appoint a **new monitor**.
+
+```
+Period 1 → Rahul
+Period 2 → Priya
+Period 3 → Aman
+```
+
+Everyone has to remember the new monitor again and again.
+
+---
+
+With `useCallback`:
+
+You keep the **same monitor** until you decide to change.
+
+```
+Period 1 → Rahul
+Period 2 → Rahul
+Period 3 → Rahul
+```
+
+No unnecessary updates.
+
+---
+
+# What is `[]`?
+
+```jsx
+useCallback(() => {
+  console.log("Hello");
+}, []);
+```
+
+The empty dependency array means:
+
+> "Never recreate this function."
+
+---
+
+If you write
+
+```jsx
+useCallback(() => {
+  console.log(count);
+}, [count]);
+```
+
+React says
+
+> "Whenever `count` changes, create a new function."
+
+---
+
+# When should you use `useCallback`?
+
+✅ When:
+
+* Passing a function to a child component.
+* The child uses `React.memo()`.
+* The function is used inside `useEffect` as a dependency.
+
+❌ Don't use it for every function. If the function is only used inside the same component, creating a new function on each render is usually fine.
+
+---
+
+# Easy Rule to Remember
+
+Whenever you hear **`useCallback`**, think:
+
+> **"React, please remember this function. Don't make a new copy every time the component re-renders."**
+
+---
+
+## One-line definition (perfect for interviews)
+
+> **`useCallback` is a React hook that memoizes a function, so React reuses the same function reference across renders unless its dependencies change.**
+
+This prevents unnecessary re-renders of child components and can improve performance.
+
+
+
+-----------------------------------useRef hook-------------------
+
+Sure! Here's **`useRef` in very easy points** that you can remember for interviews and revision.
+
+# Why do we use `useRef`?
+
+1. **To access DOM elements directly**
+
+   * Focus an input
+   * Select text
+   * Play/Pause a video
+   * Scroll to a specific section
+
+   **Example:**
+
+   ```jsx
+   inputRef.current.focus();
+   ```
+
+---
+
+2. **To store a value without re-rendering the component**
+
+   * Unlike `useState`, changing a `useRef` value does **not** re-render the component.
+
+   **Example:**
+
+   ```jsx
+   const countRef = useRef(0);
+
+   countRef.current++;
+   ```
+
+---
+
+3. **To remember a value between renders**
+
+   * Even if the component re-renders, the value stored in `useRef` remains the same.
+
+---
+
+4. **To avoid unnecessary re-renders**
+
+   * If a value is not displayed on the UI, store it in `useRef` instead of `useState`.
+
+---
+
+5. **To store timer IDs**
+
+   * Useful with `setTimeout()` and `setInterval()`.
+
+   **Example:**
+
+   ```jsx
+   const timerRef = useRef(null);
+
+   timerRef.current = setInterval(...);
+   ```
+
+---
+
+6. **To interact with input fields**
+
+   * Focus the input
+   * Clear the input
+   * Select all text
+
+---
+
+7. **To copy text (like your Password Generator)**
+
+   * Select the password automatically before copying.
+
+   ```jsx
+   passwordRef.current.select();
+   ```
+
+---
+
+# `useState` vs `useRef`
+
+| `useState`                            | `useRef`                                                     |
+| ------------------------------------- | ------------------------------------------------------------ |
+| Stores state                          | Stores a mutable value or DOM reference                      |
+| Re-renders the component when updated | Does **not** re-render the component                         |
+| Used for data shown on the UI         | Used for values or elements that don't need to update the UI |
+| Updated using `setState()`            | Updated using `.current`                                     |
+
+---
+

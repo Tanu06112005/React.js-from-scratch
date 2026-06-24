@@ -1,0 +1,430 @@
+Since you've already learned **`useState`**, **Axios**, and **API fetching**, this is the perfect time to understand **`useEffect`**.
+
+---
+
+# What is `useEffect`?
+
+> **`useEffect` is a React Hook that allows you to perform side effects in a functional component.**
+            (side stacks me kuch kaam ko add kr deta h aur jbb react k function khtm hota h tb side stack ke inside jo bhi kaam h vo execute hote h)
+### Side Effects mean:
+
+Any operation that happens **outside of rendering the UI**.
+
+Examples:
+
+* Fetching data from an API
+* Using Axios
+* Using `setTimeout()` or `setInterval()`
+* Accessing Local Storage
+* Adding Event Listeners
+* Updating the document title
+
+---
+
+# Why do we need `useEffect`?
+
+Suppose you want to fetch data as soon as the page opens.
+
+Without `useEffect`:
+
+```jsx
+function App() {
+
+  getData();   // ❌
+
+  return <h1>Hello</h1>;
+}
+```
+
+Problem:
+
+Every time React re-renders,
+
+```
+Component Render
+       ↓
+getData()
+       ↓
+State Update
+       ↓
+Component Render Again
+       ↓
+getData()
+       ↓
+Infinite Loop 🔁
+```
+
+That's why React provides **`useEffect()`**.
+
+---
+
+# Syntax
+
+```jsx
+useEffect(() => {
+
+    // Code
+
+}, []);
+```
+
+Import it:
+
+```jsx
+import { useEffect } from "react";
+```
+
+---
+
+# Structure
+
+```jsx
+useEffect(() => {
+
+    console.log("Runs");
+
+}, []);
+```
+
+```
+useEffect
+      │
+      ▼
+Callback Function
+      │
+      ▼
+Dependency Array
+```
+
+---
+
+# Case 1: Empty Dependency Array `[]`
+
+```jsx
+useEffect(() => {
+
+    console.log("Component Mounted");
+
+}, []);
+```
+
+Runs **only once** when the component loads.
+
+```
+Page Opens
+     │
+     ▼
+Component Mounts
+     │
+     ▼
+useEffect Runs Once
+```
+
+This is commonly used for:
+
+* API calls
+* Axios requests
+* Reading Local Storage
+
+---
+
+## Example with Axios
+
+Instead of clicking a button:
+
+```jsx
+const getData = async () => {
+    const response = await axios.get(
+        "https://jsonplaceholder.typicode.com/todos"
+    );
+
+    setData(response.data);
+};
+
+useEffect(() => {
+    getData();
+}, []);
+```
+
+Now the data loads automatically when the page opens.
+
+---
+
+# Case 2: No Dependency Array
+
+```jsx
+useEffect(() => {
+
+    console.log("Runs");
+
+});
+```
+
+Runs **after every render**.
+
+```
+Render
+ ↓
+useEffect
+
+Render Again
+ ↓
+useEffect
+
+Render Again
+ ↓
+useEffect
+```
+
+Example:
+
+```jsx
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+    console.log("Running...");
+});
+
+<button onClick={() => setCount(count + 1)}>
+    Increase
+</button>
+```
+
+Every click prints:
+
+```
+Running...
+```
+
+---
+
+# Case 3: Dependency Array with Variables
+
+```jsx
+useEffect(() => {
+
+    console.log("Count Changed");
+
+}, [count]);
+```
+
+Runs only when **`count` changes**.
+
+Example:
+
+```jsx
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+    console.log("Count Changed");
+}, [count]);
+```
+
+```
+count changes
+      │
+      ▼
+useEffect runs
+```
+
+If another state changes:
+
+```jsx
+const [name, setName] = useState("");
+```
+
+Changing `name` **will not** run the effect.
+
+---
+
+# Multiple Dependencies
+
+```jsx
+useEffect(() => {
+
+    console.log("Count or Name Changed");
+
+}, [count, name]);
+```
+
+Runs when:
+
+* `count` changes ✅
+* `name` changes ✅
+
+---
+
+# Cleanup Function
+
+Sometimes you need to clean resources.
+
+Example:
+
+```jsx
+useEffect(() => {
+
+    const id = setInterval(() => {
+        console.log("Hello");
+    }, 1000);
+
+    return () => {
+        clearInterval(id);
+    };
+
+}, []);
+```
+
+The cleanup function runs when:
+
+* The component unmounts.
+* Before the effect runs again (if dependencies changed).
+
+---
+
+# Real-Life Example 1 (Document Title)
+
+```jsx
+import { useState, useEffect } from "react";
+
+function App() {
+
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        document.title = `Count: ${count}`;
+    }, [count]);
+
+    return (
+        <>
+            <h1>{count}</h1>
+
+            <button onClick={() => setCount(count + 1)}>
+                Increase
+            </button>
+        </>
+    );
+}
+```
+
+Browser tab title changes automatically.
+
+---
+
+# Real-Life Example 2 (Local Storage)
+
+```jsx
+const [notes, setNotes] = useState([]);
+
+useEffect(() => {
+
+    localStorage.setItem(
+        "notes",
+        JSON.stringify(notes)
+    );
+
+}, [notes]);
+```
+
+Whenever `notes` change:
+
+```
+notes changes
+      │
+      ▼
+useEffect
+      │
+      ▼
+Save to Local Storage
+```
+
+---
+
+# Real-Life Example 3 (API)
+
+```jsx
+const [users, setUsers] = useState([]);
+
+useEffect(() => {
+
+    async function getUsers() {
+
+        const response = await axios.get(
+            "https://jsonplaceholder.typicode.com/users"
+        );
+
+        setUsers(response.data);
+    }
+
+    getUsers();
+
+}, []);
+```
+
+Data is fetched automatically when the page loads.
+
+---
+
+# Difference Between `useState` and `useEffect`
+
+| `useState`                      | `useEffect`                               |
+| ------------------------------- | ----------------------------------------- |
+| Stores state                    | Performs side effects                     |
+| Triggers re-render when updated | Runs after rendering                      |
+| Holds data                      | Fetches data, timers, local storage, etc. |
+
+---
+
+# Interview Questions
+
+### 1. What is `useEffect`?
+
+> `useEffect` is a React Hook used to perform side effects such as API calls, timers, local storage operations, and event listeners after a component renders.
+
+---
+
+### 2. When does `useEffect` run?
+
+It depends on the dependency array:
+
+```jsx
+useEffect(() => {}, []);
+```
+
+➡ Runs only once after the initial render.
+
+```jsx
+useEffect(() => {});
+```
+
+➡ Runs after every render.
+
+```jsx
+useEffect(() => {}, [count]);
+```
+
+➡ Runs only when `count` changes.
+
+---
+
+### 3. Why is `useEffect` used for API calls?
+
+Because API requests are **side effects**. Placing them inside `useEffect` with an empty dependency array (`[]`) ensures they run only once when the component mounts, preventing repeated requests on every render.
+
+---
+
+## Easy Trick to Remember
+
+```
+useState
+---------
+Stores Data
+
+useEffect
+----------
+Does Something
+```
+
+Or remember this:
+
+* **`useState` = "What my component knows."**
+* **`useEffect` = "What my component does after rendering."**

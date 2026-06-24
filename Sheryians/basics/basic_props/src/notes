@@ -1,0 +1,74 @@
+Many of us will be unaware of this difference which is really important to understand during development.
+ The possible answer to this question, if asked, will be "Framework is a collection of various 
+ libraries". However, this definition is not entirely true. "Who calls whom" i.e. 
+ the caller/callee relationship defines the difference between the two terms. 
+ It is our code which calls the library code while in framework, it is framework's code which calls
+  our code. Let's see how. 
+ 
+
+Library
+
+
+A library provides a set of helper functions/objects/modules which your application code calls 
+for specific functionality. Libraries typically focus on a narrow scope (e.g., strings, IO, 
+sockets), so their API's also tend to be smaller and require fewer dependencies. It is just a 
+collection of class definitions. Why we need them? The reason being very simple i.e. code reuse,
+ use the code which has already been written by other developers. Example, some library has a
+  method named findLastIndex(char) to find the last index of a particular character in a string.
+   We can straightaway call findLastIndex(charToFind) function of the library and pass the 
+   characters whose position we need to find as a parameter in the function call. 
+ 
+
+
+Framework
+
+
+Framework, on the other hand has defined open or unimplemented functions or objects which the
+ user writes to create a custom application. (C++/Java users will understand this as it is much
+  like implementing an abstract function). Because a framework is itself an application, it has 
+  a wider scope and includes almost everything necessary to make a user application as per his 
+  own needs. Wikipedia makes it more clear: 
+
+"In computer programming, a software framework is an abstraction in which software providing
+ generic functionality can be selectively changed by additional user-written code, thus 
+ providing application-specific software" 
+ 
+
+framework vs library
+
+
+Thus, the key difference is in the "Inversion of Control", commonly called as IoC. When we 
+call a method from a library, we are in control. But in framework, the control is inverted 
+i.e. the framework calls us. It defines a skeleton where the application defines its own 
+features to fill out the skeleton. Example, in Javascript, we usually use this: 
+ 
+
+$(document.ready(){     // this call will be done by the jquery 
+// framework when document will be ready.
+    
+    function() {
+        /* your code */    // our implementation inside the framework's function
+    }
+});
+
+While in library, we normally have its object to call its functions or we simply call them. Ex: 
+ 
+
+str = "Geeks.ForGeeks"
+var pos = str.lastIndexOf("."); // simply calling function of string library
+
+Important Points: 
+ 
+
+Library : It performs a set of  specific and well-defined operations. Examples : Network protocols, compression, image manipulation, string utilities, regular expression evaluation, math etc
+Framework: It is known to be a skeleton where the application defines the content of the operation by filling out the skeleton. Examples of frameworks: Web application system, Plug-in manager, GUI system. The framework only defines the concept but an application further defines the functionality that is useful for end-users.
+Inversion of control: When we call a method from a library, we are in control. But in framework, the control is inverted i.e. the framework calls us.
+The below table explains the differences between Framework and Library -
+
+S.No	            Framework            	                                                                                                Library            
+1.	It comprises of lot of APIs , compilers , support programs , libraries etc.                                    	It is a collection of helper modules , classes , objects , functions , pre-written code , etc.
+2.	It is difficult to replace frameworks.	                                                                        A library is easy to be replaced with another library.
+3.	A framework development requires a lot of code that decrease performance and increase the load time.	        Building a library requires less code , so there is better performance and fast load time.
+4.	Including framework smoothly into an existing project is impossible.	                                        Libraries can be integrated easily into existing projects to add some specific functionality.
+5.	Its example are AngularJS , Spring , NodeJS , etc.	                                                            Its example are JQuery , React JS , etc. 
+

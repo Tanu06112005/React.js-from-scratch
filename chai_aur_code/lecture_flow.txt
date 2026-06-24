@@ -1,0 +1,178 @@
+chai_aur_code + sheryians ke video and conceps ko mix krke dono playlist se i am learning 
+
+
+
+lecture1:(learned about two types of creating the react app projects)
+    vite_latest
+    vite_project
+
+
+lecture2:
+    learned how work flows in the react 
+    using 
+        inspecting_how_react_works
+
+
+lecture3:
+    why do we need hooks 
+    counter project
+    using
+        lect3_hooks_counter_project
+
+
+lecture4:
+    tailwind css import krna sihka & props sikha
+    using 
+        lect4_tailwindcss
+
+
+lecture5:
+    project: for learning hoe to use tailwind css 
+    using 
+        lect5_bgChanger
+
+
+lecture6:
+    props project
+    using
+        sheryians>basics>props_project
+
+
+lecture7:
+    how to use tailwind and designing ui (practising react)
+    using
+        sheryians>projects>UI_project-tailwind
+
+
+lecture8:
+    learnong how functions are called and executed in the jsx and react on the application of an event
+    event based function execution
+    using 
+        sheryians>basics>functions  
+
+
+lecture9:
+    form  default submit handeling : e.preventDefault()
+    TWO WAY BINDING : 
+    using:
+        sheryians>basics>formHandling_two_way_binding
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+                                TWO WAY BINDING
+    
+    ek esi approach jaha pr hm react ko hi kh deke h ki vo interact kre website se rather than the user itself interacting to the website
+     Two-way binding ka matlab hai:
+
+    Data UI (input) se State me jaye aur State se UI me wapas aaye.
+
+    Yaani data dono directions me flow karta hai.
+
+            User Input    
+                │
+                ▼
+            React State
+                ▲
+                │
+            Input Value
+
+
+            react state('')--> userInput---->react State("user input save ho rha h")--> then input value
+
+
+        *p-------Two-Way Binding in React---------*
+
+Definition:
+
+Two-way binding is a process where the UI (input field) and the state stay synchronized. Any change in the input updates the state, and any change in the state automatically updates the input.
+
+In simple words:
+
+Input → State (when the user types)
+State → Input (when the state changes)
+
+That's why it is called two-way binding.
+                // steps:-
+// ye bs pretend krata h ki values by the user hi ja rhe h website me but esa nhi hota h 
+jo user type krte h vo directly state change kr rha h react component/ element ko 
+jaha se fir state update hoti h us component ki 
+and then the final input is set 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+lecture10:
+        notesAppProject based on the above two concepts(form submithandling + two way binding)
+        using:
+                sheryians>projects>notesAppProject
+
+
+lecturre11:
+        localStorage
+        using:
+                sheryians>basics>localStorage
+
+
+lecture12:
+        API calling 
+            i.  fetch API
+            ii. axios (js library that helps th ereact application to communicate with the server,backend)
+
+        using:
+            sheryians>basics>apiCalling
+
+
+lecture13:
+        useEffect hooks
+        using:
+            sheryians>basics>useEffect-hooks
+
+
+lecture14:
+        gallery Project(based on useEffect)
+        using:
+             sheryians>projects>gallery-project
+
+
+lecture15:
+        react routing
+        using:
+        sheryians>basics>react-router-dom
+
+
+lecture16:
+        Advance routing
+            404 page
+            nested routing
+            dynamic routing
+        using:
+            sheryians>basics>Advance_router
+
+
+lecture17,18:
+
+
+lecture19:
+        context api 
+
+
+
+
+lecture20:(chai aur code)
+    useEffect,useRef, useCallback
+    using:
+        passward generator
+
+           chai_aur_code>lec6_passwordGenerator 
+
+    **
+        bohot acche se hitesh sir ne ye tipocs pdhaye h 
+        accha use h useCallback and useRef k 
+        also used useState and useEffect
+    **
+
+
+lecture21:(chai_aur_code)
+        custom react hooks via a project (currency converter)
+        using:
+            chai_aur_code>lec7_currence-converter
+
+
+

@@ -1,0 +1,314 @@
+## What is Local Storage in React?
+
+**Local Storage** is a feature provided by the **browser**, not by React.
+
+It allows you to **store data permanently in the user's browser**. The data remains even if:
+
+* The page is refreshed.
+* The browser is closed and reopened.
+
+The data is only removed if:
+
+* You manually delete it.
+* The user clears the browser's storage.
+
+---
+
+## Why do we use Local Storage?
+
+Suppose you have a Notes App.
+
+Without Local Storage:
+
+```
+Add Note
+      ↓
+State
+      ↓
+Refresh Page
+      ↓
+All notes disappear ❌
+```
+
+Because React state (`useState`) is stored in memory and is reset when the page reloads.
+
+With Local Storage:
+
+```
+Add Note
+      ↓
+State
+      ↓
+Save to Local Storage
+      ↓
+Refresh Page
+      ↓
+Read from Local Storage
+      ↓
+Notes are still there ✅
+```
+
+---
+
+# Local Storage Methods
+
+There are four main methods.
+
+## 1. Store Data
+
+```javascript
+localStorage.setItem("name", "Tanushika");
+```
+
+Syntax:
+
+```javascript
+localStorage.setItem(key, value);
+```
+
+Example:
+
+```javascript
+localStorage.setItem("city", "Delhi");
+```
+
+---
+
+## 2. Get Data
+
+```javascript
+const name = localStorage.getItem("name");
+
+console.log(name);
+```
+
+Output
+
+```
+Tanushika
+```
+
+---
+
+## 3. Remove One Item
+
+```javascript
+localStorage.removeItem("name");
+```
+
+---
+
+## 4. Remove Everything
+
+```javascript
+localStorage.clear();
+```
+
+---
+
+# Important Point
+
+Local Storage **only stores strings**.
+
+### Wrong
+
+```javascript
+const student = {
+    name: "Tanushika",
+    age: 21
+};
+
+localStorage.setItem("student", student);
+```
+
+Output
+
+```
+[object Object]
+```
+
+---
+
+### Correct
+
+Convert object to JSON.
+
+```javascript
+const student = {
+    name: "Tanushika",
+    age: 21
+};
+
+localStorage.setItem(
+    "student",
+    JSON.stringify(student)
+);
+```
+
+Now it stores
+
+```json
+{
+  "name": "Tanushika",
+  "age": 21
+}
+```
+
+---
+
+To retrieve it:
+
+```javascript
+const student = JSON.parse(
+    localStorage.getItem("student")
+);
+
+console.log(student.name);
+```
+
+Output
+
+```
+Tanushika
+```
+
+---
+
+# Using Local Storage in React
+
+Suppose you have
+
+```javascript
+const [notes, setNotes] = useState([]);
+```
+
+---
+
+## Save Notes
+
+Whenever notes change
+
+```javascript
+useEffect(() => {
+    localStorage.setItem(
+        "notes",
+        JSON.stringify(notes)
+    );
+}, [notes]);
+```
+
+Explanation
+
+```
+notes changes
+      ↓
+useEffect runs
+      ↓
+Convert array to JSON
+      ↓
+Store in Local Storage
+```
+
+---
+
+## Load Notes
+
+When the app starts
+
+```javascript
+useEffect(() => {
+    const savedNotes = localStorage.getItem("notes");
+
+    if (savedNotes) {
+        setNotes(JSON.parse(savedNotes));
+    }
+}, []);
+```
+
+Explanation
+
+```
+App starts
+      ↓
+Read Local Storage
+      ↓
+Convert JSON to Array
+      ↓
+Update State
+```
+
+---
+
+# Complete Example
+
+```jsx
+import { useState, useEffect } from "react";
+
+function App() {
+    const [notes, setNotes] = useState([]);
+
+    useEffect(() => {
+        const saved = localStorage.getItem("notes");
+
+        if (saved) {
+            setNotes(JSON.parse(saved));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem(
+            "notes",
+            JSON.stringify(notes)
+        );
+    }, [notes]);
+
+    return (
+        <div>
+            <button
+                onClick={() =>
+                    setNotes([...notes, "New Note"])
+                }
+            >
+                Add Note
+            </button>
+
+            {notes.map((note, index) => (
+                <p key={index}>{note}</p>
+            ))}
+        </div>
+    );
+}
+```
+
+Now:
+
+* Click **Add Note**.
+* Refresh the page.
+* The note is still there.
+
+---
+
+# Local Storage vs React State
+
+| React State (`useState`) | Local Storage         |
+| ------------------------ | --------------------- |
+| Temporary                | Persistent            |
+| Clears on refresh        | Remains after refresh |
+| Fast for UI updates      | Used to save data     |
+| Stored in memory         | Stored in the browser |
+
+---
+
+# Local Storage vs Session Storage
+
+| Local Storage                          | Session Storage                                |
+| -------------------------------------- | ---------------------------------------------- |
+| Data remains after closing the browser | Data is deleted when the tab/browser is closed |
+| Storage limit ≈ 5–10 MB                | Storage limit ≈ 5–10 MB                        |
+| Shared across tabs of the same origin  | Separate for each browser tab                  |
+
+---
+
+## Interview Definition
+
+> **Local Storage** is a browser-provided storage mechanism that allows web applications to store key-value data persistently on the client side. The data remains available even after the browser is refreshed or reopened. Since Local Storage stores data as strings, objects and arrays must be converted using `JSON.stringify()` before storing and `JSON.parse()` after retrieving. In React, Local Storage is commonly used with `useEffect` to persist application state such as notes, themes, or user preferences.

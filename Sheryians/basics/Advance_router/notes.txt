@@ -1,0 +1,837 @@
+NOTES:-
+***************************************************************************************************
+1.) Page Not Found:
+
+    if the user write the wrong or non existing page nam ein the url 
+            // it lands to page not found page
+                    // <Route path='*' element={<PageNotFound />} />
+
+***************************************************************************************************
+
+2.) Nested Routing:
+  types:
+-------------------i. easy one-----------------------
+
+        import React from 'react'
+import { Route,Routes } from 'react-router-dom'
+import NavBar from './components/NavBar'
+import Footer from './components/Footer'
+import Home from './pages/Home'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import Login from './pages/Login'
+import NotFound from './pages/NotFound'
+import Mens from './pages/Mens'
+import Womens from './pages/Womens'
+
+const App = () => {
+  return (
+    <div className='h-screen bg-black text-white'>
+      <NavBar />
+      <Routes>
+        <Route path='/' element={<Home />}/>
+        <Route path='/about' element={<About />}/>
+        <Route path='/contact' element={<Contact />}/>
+        <Route path='/login' element={<Login />}/>
+
+        <Route path='/home/mens' element={<Mens/>} />
+        <Route path='/home/womens' element={<Womens/>} />
+
+
+
+        {/*when the user write an route that does not exists we use path as '*' that lands on the page not found page*/ }
+        <Route path='*' element={<NotFound />} />
+      </Routes>
+      <Footer />
+    </div>
+  )
+}
+
+export default App
+
+
+
+
+                import React from 'react'
+                import { Link } from 'react-router-dom'
+                import Mens from './Mens'
+                import Womens from './Womens'
+
+                const Home = () => {
+                return (
+                    <div>
+                        <h1>Home Page</h1>
+                        <Link className='absolute top-20 left-70' to='/Home/Mens'>mens</Link>
+                        <Link className='absolute top-20 left-88' to='/Home/Womens'>women</Link>
+                    </div>
+                )
+                }
+
+                export default Home
+
+-------------------------ii. actual one -------------------------------
+--> isme Route ke enclosing me apne nested route ko mention krte h
+--> & jis page k nested rout h usme jake <Outlet /> likte h 
+
+
+import kr dena sab kuch phle accordingly:
+
+const App=()=>{
+
+    return (
+        <div>
+            <Routes>
+                            -----enclosing Route tag------
+                <Route path='/' element={<Home />} >
+                    <Route  path='/home/mens' element={<Mens />} />
+                    <Route  path='/home/womens' element={<Women />} />
+                </Route>
+
+
+                <Route  path='/about' element={<About />} />
+                <Route  path='/contact' element={<Contact />} />
+
+
+    )
+}
+
+
+
+const Home=()=>{
+    return (
+        <div>
+            <h1>Home Page</h1>
+
+            <Link to='/home/mens' >Mens</Link>
+            <Link to='/home/womens' >Womens</Link>
+
+         <Outlet />
+        
+        </div> 
+    )
+}
+
+
+***************************************************************************************************
+
+
+3.)  DYNAMIC ROUTING:-
+
+    Since you've learned **React Router**, the next important concept is **Dynamic Routing**.
+
+---
+
+# What is Dynamic Routing?
+
+Dynamic routing means:
+
+> **Creating routes where a part of the URL changes dynamically.**
+
+Instead of creating separate routes for every item, we use **parameters**.
+
+---
+
+## Example Without Dynamic Routing
+
+Suppose you have three users.
+
+You might write:
+
+                    ```jsx
+                    <Route path="/user1" element={<User1 />} />
+                    <Route path="/user2" element={<User2 />} />
+                    <Route path="/user3" element={<User3 />} />
+                    ```
+
+### Problem 😕
+
+            If you have **1000 users**, you'll have to write:
+
+                                ```jsx
+                                <Route path="/user1" />
+                                <Route path="/user2" />
+                                <Route path="/user3" />
+                                ...
+                                <Route path="/user1000" />
+                                ```
+
+That's impossible to manage.
+
+---
+
+# Dynamic Routing Solution
+
+Instead, create **one route**:
+
+                            ```jsx
+                            <Route path="/user/:id" element={<User />} />
+                            ```
+
+Notice:
+
+```text
+:id
+```
+
+The `:` tells React Router:
+
+> "This part of the URL can change."
+
+---
+
+## Example URLs
+
+All of these will match the same route:
+
+                                ```text
+                                /user/1
+                                /user/2
+                                /user/25
+                                /user/100
+                                ```
+
+Only the **id** changes.
+
+---
+
+# Visual Representation
+
+```text
+URL
+
+/user/1
+      │
+      ▼
+id = 1
+
+-------------------------
+
+/user/5
+      │
+      ▼
+id = 5
+
+-------------------------
+
+/user/100
+      │
+      ▼
+id = 100
+```
+
+The component remains the same.
+
+---
+
+# Step 1: Create Route
+
+```jsx
+import User from "./pages/User";
+
+<Routes>
+    <Route path="/user/:id" element={<User />} />
+</Routes>
+```
+
+---
+
+# Step 2: Read the Parameter
+
+                            React Router provides the `useParams()` hook.
+
+                                ```jsx
+                                import { useParams } from "react-router-dom";
+
+                                const User = () => {
+
+                                    const params = useParams();
+
+                                    return (
+                                        <h1>User ID : {params.id}</h1>
+                                    );
+                                };
+
+                                export default User;
+                                ```
+
+---
+
+## Output
+
+If URL is
+
+```text
+/user/15
+```
+
+Output
+
+```text
+User ID : 15
+```
+
+If URL is
+
+```text
+/user/999
+```
+
+Output
+
+```text
+User ID : 999
+```
+
+---
+
+# Destructuring (Common Way)
+
+Instead of
+
+```jsx
+const params = useParams();
+
+console.log(params.id);
+```
+
+people usually write
+
+```jsx
+const { id } = useParams();
+
+console.log(id);
+```
+
+---
+
+# Real Life Example
+
+Suppose you have an e-commerce website.
+
+Products:
+
+```text
+iPhone
+Laptop
+Shoes
+Watch
+```
+
+Instead of making
+
+```text
+/product1
+/product2
+/product3
+/product4
+```
+
+You create one route.
+
+```jsx
+<Route path="/product/:id" element={<Product />} />
+```
+
+Now
+
+```text
+/product/1
+/product/2
+/product/3
+/product/4
+```
+
+all use the same component.
+
+---
+
+# Fetch Data Using the ID
+
+This is how dynamic routing is commonly used with APIs.
+
+```jsx
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+
+const Product = () => {
+
+    const { id } = useParams();
+
+    useEffect(() => {
+
+        axios.get(`https://fakestoreapi.com/products/${id}`)
+             .then(res => console.log(res.data));
+
+    }, [id]);
+
+    return <h1>Product {id}</h1>;
+}
+```
+
+If URL is
+
+```text
+/product/5
+```
+
+API becomes
+
+```text
+https://fakestoreapi.com/products/5
+```
+
+Only Product 5 is fetched.
+
+---
+
+# Multiple Dynamic Parameters
+
+You can have more than one parameter.
+
+```jsx
+<Route path="/user/:userId/post/:postId" element={<Post />} />
+```
+
+URL:
+
+```text
+/user/10/post/25
+```
+
+Inside component:
+
+```jsx
+const { userId, postId } = useParams();
+```
+
+Output
+
+```text
+userId = 10
+postId = 25
+```
+
+---
+
+# Dynamic Links
+
+Suppose you have products.
+
+```jsx
+const products = [
+    { id: 1, name: "Phone" },
+    { id: 2, name: "Laptop" }
+];
+```
+
+Create links like this:
+
+```jsx
+import { Link } from "react-router-dom";
+
+{
+    products.map(product => (
+        <Link
+            key={product.id}
+            to={`/product/${product.id}`}
+        >
+            {product.name}
+        </Link>
+    ))
+}
+```
+
+Clicking
+
+```text
+Phone
+```
+
+opens
+
+```text
+/ product /1
+```
+
+Clicking
+
+```text
+Laptop
+```
+
+opens
+
+```text
+/ product /2
+```
+
+---
+
+# Complete Flow
+
+```text
+User clicks
+
+Product 5
+      │
+      ▼
+
+URL becomes
+
+/product/5
+      │
+      ▼
+
+React Router matches
+
+/product/:id
+      │
+      ▼
+
+Product Component Opens
+      │
+      ▼
+
+useParams()
+      │
+      ▼
+
+id = 5
+      │
+      ▼
+
+Fetch Product 5
+      │
+      ▼
+
+Display Product Details
+```
+
+---
+
+# Interview Questions
+
+### 1. What is dynamic routing?
+
+Dynamic routing allows a part of the URL to act as a variable using route parameters (like `:id`), so the same component can handle many different URLs.
+
+---
+
+### 2. What is `useParams()`?
+
+`useParams()` is a React Router hook that returns the dynamic parameters from the current URL.
+
+Example:
+
+```jsx
+const { id } = useParams();
+```
+
+If the URL is:
+
+```text
+/product/10
+```
+
+Then:
+
+```text
+id = 10
+```
+
+---
+
+### 3. Why do we use dynamic routing?
+
+Without dynamic routing, you'd need a separate route for every user, product, or blog post. With dynamic routing, one route can handle all of them, making your application much easier to build and maintain.
+
+
+***************************************************************************************************
+4.) useNavigate() hook :-
+
+
+`useNavigate` is a **React Router hook** that allows you to **navigate (move) from one page/route to another programmatically**.
+
+Instead of the user clicking a `<Link>`, your JavaScript code can change the page.
+
+---
+
+# Why do we use `useNavigate`?
+
+Suppose a user logs in successfully.
+
+After login, you want to automatically send them to the Dashboard.
+
+Without `useNavigate`, the user would have to click a link manually.
+
+With `useNavigate`, React changes the route automatically.
+
+---
+
+# Syntax
+
+                    ```jsx
+                    import { useNavigate } from "react-router-dom";
+
+                    const navigate = useNavigate();
+                    ```
+
+                    Now you can use:
+
+                    ```jsx
+                    navigate("/about");
+                    ```
+
+---
+
+# Example 1: Navigate on Button Click
+
+                            ```jsx
+                            import React from "react";
+                            import { useNavigate } from "react-router-dom";
+
+                            const Home = () => {
+
+                            const navigate = useNavigate();
+
+                            return (
+                                <div>
+                                <h1>Home Page</h1>
+
+                                <button onClick={() => navigate("/about")}>
+                                    Go to About
+                                </button>
+                                </div>
+                            );
+                            };
+
+                            export default Home;
+                            ```
+
+### Output
+
+Current URL:
+
+```
+/
+```
+
+Click button:
+
+```
+Go to About
+```
+
+URL becomes:
+
+```
+/about
+```
+
+The About page is displayed.
+
+---
+
+# Example 2: Navigate After Login
+
+                            ```jsx
+                            import { useNavigate } from "react-router-dom";
+
+                            const Login = () => {
+
+                            const navigate = useNavigate();
+
+                            function handleLogin() {
+
+                                // Login successful
+
+                                navigate("/dashboard");
+                            }
+
+                            return (
+                                <button onClick={handleLogin}>
+                                Login
+                                </button>
+                            );
+                            };
+                            ```
+
+Flow:
+
+```
+User clicks Login
+        │
+        ▼
+Login Successful
+        │
+        ▼
+navigate("/dashboard")
+        │
+        ▼
+Dashboard opens
+```
+
+---
+
+# Example 3: Navigate with Dynamic Route
+
+Suppose your route is
+
+```jsx
+<Route path="/user/:id" element={<User />} />
+```
+
+You can navigate like this:
+
+```jsx
+navigate("/user/15");
+```
+
+URL becomes:
+
+```
+/user/15
+```
+
+---
+
+                # Go Back
+
+                You can go back to the previous page.
+
+                ```jsx
+                navigate(-1);
+                ```
+
+Example:
+
+```
+Home
+    ↓
+About
+    ↓
+Contact
+```
+
+On Contact page:
+
+```jsx
+navigate(-1);
+```
+
+Now you're back to:
+
+```
+About
+```
+
+---
+
+                            # Go Forward
+
+                            ```jsx
+                            navigate(1);  navigate(+1);
+                            ```
+
+                            This works like the browser's Forward button.
+
+                            ---
+
+# Replace Current Page
+
+Normally,
+
+```jsx
+navigate("/home");
+```
+
+adds a new entry to the browser history.
+
+If you don't want users to go back (common after login), use:
+
+```jsx
+navigate("/dashboard", { replace: true });
+```
+
+Example:
+
+```
+Login
+      ↓
+Dashboard
+```
+
+Pressing Back will **not** return to the Login page because it was replaced in the history stack.
+
+---
+
+# Difference Between `<Link>` and `useNavigate`
+
+| `<Link>`                | `useNavigate()`                                              |
+| ----------------------- | ------------------------------------------------------------ |
+| Used in JSX             | Used inside JavaScript functions                             |
+| User clicks manually    | Navigation happens programmatically                          |
+| Similar to an `<a>` tag | Similar to `window.location`, but without reloading the page |
+
+### Using `<Link>`
+
+```jsx
+import { Link } from "react-router-dom";
+
+<Link to="/about">About</Link>
+```
+
+The user clicks the link.
+
+---
+
+### Using `useNavigate`
+
+```jsx
+const navigate = useNavigate();
+
+<button onClick={() => navigate("/about")}>
+  About
+</button>
+```
+
+Your code decides when to navigate.
+
+---
+
+# Real-Life Use Cases
+
+* ✅ Redirect after successful login.
+* ✅ Redirect after submitting a form.
+* ✅ Redirect after deleting a record.
+* ✅ Go to a product details page.
+* ✅ Go back to the previous page.
+
+---
+
+# Summary
+
+* `useNavigate` is a **hook** from `react-router-dom`.
+* It lets you change routes **programmatically**.
+* Common syntax:
+
+```jsx
+const navigate = useNavigate();
+navigate("/about");
+```
+
+* Useful methods:
+
+  * `navigate("/path")` → Go to a specific route.
+  * `navigate(-1)` → Go back.
+  * `navigate(1)` → Go forward.
+  * `navigate("/home", { replace: true })` → Replace the current history entry.
+
+**Interview definition:**
+
+> `useNavigate` is a React Router hook used to navigate between routes programmatically without reloading the page. It is commonly used after actions like login, form submission, or button clicks.
+
+
+
+
