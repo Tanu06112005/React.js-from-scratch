@@ -174,5 +174,14 @@ lecture21:(chai_aur_code)
         using:
             chai_aur_code>lec7_currence-converter
 
+    [ my suggestion : bohot precisely smjhna pdega ye project 
+        multiple cheezo k use hua h isme:
+            -> custom hook (.js file for hooks kyuki koi html element render nhi ho rha h isme only function hi create ho rha h)
+            -> useId hook
+            -> multiple states and their usage and setState(very dimag se)
+            -> parameters and arguments k dhyan rkhna h 
+            -> useEffect hook k use krna (used when ki kab hamara custom hook chalna chaiye phle ui render krane ke liye then data fetch krna)
+            -> another way of exporting the components(input.js file (named export ke like))
+            -> ]
 
 
