@@ -185,3 +185,17 @@ lecture21:(chai_aur_code)
             -> ]
 
 
+lecture22: (chai aur code)
+            react router (chai aur code me thoda different method h rounting k as compared to the sheryians)
+            using:
+                  chai_aur_code>lec8_reactRouter
+
+
+lecture23: (chai aur code)
+            contextAPI 
+            using:
+                    chai_aur_code>lec8_miniContext
+                    
+
+
+
