@@ -194,7 +194,7 @@ lecture22: (chai aur code)
 lecture23: (chai aur code)
             contextAPI 
             using:
-                    chai_aur_code>lec8_miniContext
+                    chai_aur_code>lec9_miniContext
                     
 
 
