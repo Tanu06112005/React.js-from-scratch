@@ -29,13 +29,13 @@ const initialState={
 export const todoSlice=createSlice({
     name: "todo",
     initialState,
-    reducers: {
+    reducers: { 
         addTodo: (state, actions)=>{
             const todo={
                 id: nanoid(),
                 text: actions.payload
             }
-            state.todos.push[todo]
+            state.todos.push(todo)
         },
         removeTodo: (state,action)=>{
                 // kisko remove krna h jiski id provide ki gyi hogi

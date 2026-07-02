@@ -3,14 +3,15 @@ import { useSelector, useDispatch } from 'react-redux'
 import {removeTodo} from '../features/tod/todoSlice'
 
 function Todos() {
-    const todos = useSelector(state => state.todos)   // used to read the state and their values from the store 
+    const todos= useSelector(state => state.todo)  
+    console.log(todos) // used to read the state and their values from the store 
     const dispatch = useDispatch()     // used to send data to the stores
 
   return (
     <>
     <div>Todos</div>
     <ul className="list-none">
-        {todos.map((todo) => (
+        {todos.todos.map((todo,indx) => (
           <li
             className="mt-4 flex justify-between items-center bg-zinc-800 px-4 py-2 rounded"
             key={todo.id}
