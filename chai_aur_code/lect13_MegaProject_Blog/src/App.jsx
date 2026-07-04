@@ -3,7 +3,9 @@ import { useState, useEffect } from 'react';
 import {useDispatch} from 'react-redux';
 import {login,logout} from './store/authSlice.js'
 import authService from './appwrite/auth';
-
+import { Header } from './components/index.js';
+import {Footer} from './components/index.js'
+import { Outlet } from 'react-router-dom';
 
 function App() {
 
@@ -34,7 +36,8 @@ function App() {
       <div className='w-full block'>
         <Header />
         <main>
-        TODO:  <Outlet />
+        TODO: 
+         <Outlet />
         </main>
         <Footer />
       </div>

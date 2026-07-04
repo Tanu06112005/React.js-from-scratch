@@ -13,7 +13,7 @@ const authSlice=createSlice({
     reducers:{
             login:(state,action)=>{
                 state.status=true;
-                state.userData=actio.payload;  // yaha spread operator k use nhi krna pdta h redux does itself
+                state.userData=action.payload;  // yaha spread operator k use nhi krna pdta h redux does itself
             },
             logout:(state)=>{
                 state.status=false,

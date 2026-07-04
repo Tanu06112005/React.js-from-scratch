@@ -32,7 +32,7 @@ import { Client, Account, ID } from "appwrite";
 
     async login({email,password}){
         try{
-             return await account.createEmailPasswordSession({email,password})
+             return await this.account.createEmailPasswordSession({email,password})
         }catch(error){
             throw error;    
         }

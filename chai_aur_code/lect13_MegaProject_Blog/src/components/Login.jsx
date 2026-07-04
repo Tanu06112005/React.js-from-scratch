@@ -8,12 +8,12 @@ import { useDispatch } from 'react-redux'
 
 // we are using react hook form here 
 // it gives array of two : handleSubmit function and register
-import { useForm } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 
 
 const Login = () => {
     const [error,setError]=useState("")
-    const [register,handleSubmit]=useForm();
+    const {register,handleSubmit}=useForm();
     const dispatch=useDispatch()
     const navigate=useNavigate()
 

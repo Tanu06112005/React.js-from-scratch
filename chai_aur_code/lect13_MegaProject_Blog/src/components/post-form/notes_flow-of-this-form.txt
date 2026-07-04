@@ -1,0 +1,908 @@
+
+This `submit` function is executed when the form is submitted.
+
+```jsx
+const submit = async (data) => {
+    ...
+}
+```
+
+The `data` parameter contains **all the form values** collected by React Hook Form.
+
+Example:
+
+```js
+data = {
+    title: "React Hook Form",
+    slug: "react-hook-form",
+    content: "...",
+    status: "active",
+    image: [File]
+}
+```
+
+---
+
+# Overall Logic
+
+There are **two cases**:
+
+```
+User clicks Save
+
+        │
+        ▼
+Is this an existing post?
+
+     Yes           No
+      │             │
+      ▼             ▼
+Update Post     Create New Post
+```
+
+---
+
+# Case 1: Updating an Existing Post
+
+```jsx
+if (post) {
+```
+
+If `post` exists, it means you're editing an existing blog post.
+
+For example:
+
+```
+Current post
+
+Title: React Basics
+Image: old.jpg
+```
+
+---
+
+## Step 1: Check whether the user selected a new image
+
+```jsx
+const file = data.image[0]
+    ? await appwriteService.uploadFile(data.image[0])
+    : null;
+```
+
+Let's break this down.
+
+### Suppose the user selects a new image.
+
+```
+data.image =
+
+[
+   File("newImage.jpg")
+]
+```
+
+Then
+
+```jsx
+data.image[0]
+```
+
+is
+
+```
+File("newImage.jpg")
+```
+
+Since it exists,
+
+```jsx
+await appwriteService.uploadFile(data.image[0])
+```
+
+uploads the image to Appwrite Storage.
+
+Suppose Appwrite returns
+
+```js
+{
+   $id: "abc123",
+   name: "newImage.jpg"
+}
+```
+
+Now
+
+```jsx
+file
+```
+
+becomes
+
+```js
+{
+   $id: "abc123"
+}
+```
+
+---
+
+### If the user didn't choose a new image
+
+```
+data.image = []
+```
+
+Then
+
+```jsx
+data.image[0]
+```
+
+is
+
+```js
+undefined
+```
+
+So
+
+```jsx
+file = null
+```
+
+No upload happens.
+
+---
+
+# Step 2: Delete the old image
+
+```jsx
+if (file) {
+    appwriteService.deleteFile(post.featuredImage);
+}
+```
+
+Suppose
+
+```
+Old Image
+
+old.png
+```
+
+and
+
+```
+New Image
+
+new.png
+```
+
+Now both images exist in storage.
+
+You don't need the old one anymore.
+
+So
+
+```jsx
+deleteFile(post.featuredImage)
+```
+
+deletes the old image from Appwrite Storage.
+
+Without this, storage would keep filling up with unused files.
+
+---
+
+# Step 3: Update the database
+
+```jsx
+const dbPost = await appwriteService.updatePost(
+    post.$id,
+    {
+        ...data,
+        featuredImage: file ? file.$id : undefined,
+    }
+);
+```
+
+Here
+
+```jsx
+...data
+```
+
+means
+
+```js
+{
+   title,
+   slug,
+   content,
+   status,
+   image
+}
+```
+
+Then
+
+```jsx
+featuredImage:
+```
+
+becomes
+
+### If a new image exists
+
+```js
+featuredImage: "abc123"
+```
+
+### Otherwise
+
+```js
+featuredImage: undefined
+```
+
+This keeps the existing image reference unchanged (assuming your `updatePost` implementation ignores `undefined` values).
+
+---
+
+# Step 4: Navigate
+
+```jsx
+if (dbPost) {
+    navigate(`/post/${dbPost.$id}`);
+}
+```
+
+If the update succeeds,
+
+go to
+
+```
+/post/12345
+```
+
+where the updated post is displayed.
+
+---
+
+# Case 2: Creating a New Post
+
+```jsx
+else {
+```
+
+This runs when
+
+```
+post == null
+```
+
+Meaning
+
+```
+Create New Post
+```
+
+---
+
+# Step 1: Upload image
+
+```jsx
+const file =
+await appwriteService.uploadFile(data.image[0]);
+```
+
+Since a new post requires an image, it uploads the selected file.
+
+Suppose Appwrite returns
+
+```js
+{
+   $id: "xyz789"
+}
+```
+
+---
+
+# Step 2
+
+```jsx
+const fileId = file.$id;
+```
+
+Now
+
+```js
+fileId
+
+=
+
+"xyz789"
+```
+
+---
+
+# Step 3
+
+```jsx
+data.featuredImage = fileId;
+```
+
+Originally
+
+```js
+data = {
+    title,
+    slug,
+    image,
+    content
+}
+```
+
+After this
+
+```js
+data = {
+    title,
+    slug,
+    image,
+    content,
+    featuredImage: "xyz789"
+}
+```
+
+---
+
+# Step 4
+
+```jsx
+const dbPost =
+await appwriteService.createPost({
+    ...data,
+    userId: userData.$id
+});
+```
+
+Now the database receives
+
+```js
+{
+   title,
+   slug,
+   content,
+   status,
+   featuredImage: "xyz789",
+   userId: "user123"
+}
+```
+
+Notice
+
+```jsx
+userId: userData.$id
+```
+
+This tells Appwrite who created the post.
+
+---
+
+# Step 5
+
+```jsx
+if (dbPost) {
+    navigate(`/post/${dbPost.$id}`);
+}
+```
+
+Go to the newly created post.
+
+---
+
+# Complete Flow
+
+```text
+User clicks Submit
+        │
+        ▼
+Is post already present?
+        │
+   ┌────┴────┐
+   │         │
+  Yes        No
+   │         │
+   ▼         ▼
+Upload new   Upload image
+image (if    │
+selected)    ▼
+   │      Get file ID
+   ▼         │
+Delete old   ▼
+image     Add featuredImage
+   │         │
+   ▼         ▼
+Update DB  Create new post
+   │         │
+   └────┬────┘
+        ▼
+Navigate to /post/:id
+```
+
+### Why upload the image **before** creating or updating the post?
+
+Because the database stores only the **image ID**, not the image itself.
+
+```
+User selects image
+        │
+        ▼
+Upload image to Appwrite Storage
+        │
+        ▼
+Storage returns
+
+file.$id = "abc123"
+        │
+        ▼
+Save "abc123" in the post document
+```
+
+Later, when displaying the post, your app uses that `featuredImage` ID to fetch and display the actual image from Appwrite Storage. This keeps the database lightweight and lets the storage service handle the image files.
+
+
+
+
+
+This `submit` function is executed when the form is submitted.
+
+```jsx
+const submit = async (data) => {
+    ...
+}
+```
+
+The `data` parameter contains **all the form values** collected by React Hook Form.
+
+Example:
+
+```js
+data = {
+    title: "React Hook Form",
+    slug: "react-hook-form",
+    content: "...",
+    status: "active",
+    image: [File]
+}
+```
+
+---
+
+# Overall Logic
+
+There are **two cases**:
+
+```
+User clicks Save
+
+        │
+        ▼
+Is this an existing post?
+
+     Yes           No
+      │             │
+      ▼             ▼
+Update Post     Create New Post
+```
+
+---
+
+# Case 1: Updating an Existing Post
+
+```jsx
+if (post) {
+```
+
+If `post` exists, it means you're editing an existing blog post.
+
+For example:
+
+```
+Current post
+
+Title: React Basics
+Image: old.jpg
+```
+
+---
+
+## Step 1: Check whether the user selected a new image
+
+```jsx
+const file = data.image[0]
+    ? await appwriteService.uploadFile(data.image[0])
+    : null;
+```
+
+Let's break this down.
+
+### Suppose the user selects a new image.
+
+```
+data.image =
+
+[
+   File("newImage.jpg")
+]
+```
+
+Then
+
+```jsx
+data.image[0]
+```
+
+is
+
+```
+File("newImage.jpg")
+```
+
+Since it exists,
+
+```jsx
+await appwriteService.uploadFile(data.image[0])
+```
+
+uploads the image to Appwrite Storage.
+
+Suppose Appwrite returns
+
+```js
+{
+   $id: "abc123",
+   name: "newImage.jpg"
+}
+```
+
+Now
+
+```jsx
+file
+```
+
+becomes
+
+```js
+{
+   $id: "abc123"
+}
+```
+
+---
+
+### If the user didn't choose a new image
+
+```
+data.image = []
+```
+
+Then
+
+```jsx
+data.image[0]
+```
+
+is
+
+```js
+undefined
+```
+
+So
+
+```jsx
+file = null
+```
+
+No upload happens.
+
+---
+
+# Step 2: Delete the old image
+
+```jsx
+if (file) {
+    appwriteService.deleteFile(post.featuredImage);
+}
+```
+
+Suppose
+
+```
+Old Image
+
+old.png
+```
+
+and
+
+```
+New Image
+
+new.png
+```
+
+Now both images exist in storage.
+
+You don't need the old one anymore.
+
+So
+
+```jsx
+deleteFile(post.featuredImage)
+```
+
+deletes the old image from Appwrite Storage.
+
+Without this, storage would keep filling up with unused files.
+
+---
+
+# Step 3: Update the database
+
+```jsx
+const dbPost = await appwriteService.updatePost(
+    post.$id,
+    {
+        ...data,
+        featuredImage: file ? file.$id : undefined,
+    }
+);
+```
+
+Here
+
+```jsx
+...data
+```
+
+means
+
+```js
+{
+   title,
+   slug,
+   content,
+   status,
+   image
+}
+```
+
+Then
+
+```jsx
+featuredImage:
+```
+
+becomes
+
+### If a new image exists
+
+```js
+featuredImage: "abc123"
+```
+
+### Otherwise
+
+```js
+featuredImage: undefined
+```
+
+This keeps the existing image reference unchanged (assuming your `updatePost` implementation ignores `undefined` values).
+
+---
+
+# Step 4: Navigate
+
+```jsx
+if (dbPost) {
+    navigate(`/post/${dbPost.$id}`);
+}
+```
+
+If the update succeeds,
+
+go to
+
+```
+/post/12345
+```
+
+where the updated post is displayed.
+
+---
+
+# Case 2: Creating a New Post
+
+```jsx
+else {
+```
+
+This runs when
+
+```
+post == null
+```
+
+Meaning
+
+```
+Create New Post
+```
+
+---
+
+# Step 1: Upload image
+
+```jsx
+const file =
+await appwriteService.uploadFile(data.image[0]);
+```
+
+Since a new post requires an image, it uploads the selected file.
+
+Suppose Appwrite returns
+
+```js
+{
+   $id: "xyz789"
+}
+```
+
+---
+
+# Step 2
+
+```jsx
+const fileId = file.$id;
+```
+
+Now
+
+```js
+fileId
+
+=
+
+"xyz789"
+```
+
+---
+
+# Step 3
+
+```jsx
+data.featuredImage = fileId;
+```
+
+Originally
+
+```js
+data = {
+    title,
+    slug,
+    image,
+    content
+}
+```
+
+After this
+
+```js
+data = {
+    title,
+    slug,
+    image,
+    content,
+    featuredImage: "xyz789"
+}
+```
+
+---
+
+# Step 4
+
+```jsx
+const dbPost =
+await appwriteService.createPost({
+    ...data,
+    userId: userData.$id
+});
+```
+
+Now the database receives
+
+```js
+{
+   title,
+   slug,
+   content,
+   status,
+   featuredImage: "xyz789",
+   userId: "user123"
+}
+```
+
+Notice
+
+```jsx
+userId: userData.$id
+```
+
+This tells Appwrite who created the post.
+
+---
+
+# Step 5
+
+```jsx
+if (dbPost) {
+    navigate(`/post/${dbPost.$id}`);
+}
+```
+
+Go to the newly created post.
+
+---
+
+# Complete Flow
+
+```text
+User clicks Submit
+        │
+        ▼
+Is post already present?
+        │
+   ┌────┴────┐
+   │         │
+  Yes        No
+   │         │
+   ▼         ▼
+Upload new   Upload image
+image (if    │
+selected)    ▼
+   │      Get file ID
+   ▼         │
+Delete old   ▼
+image     Add featuredImage
+   │         │
+   ▼         ▼
+Update DB  Create new post
+   │         │
+   └────┬────┘
+        ▼
+Navigate to /post/:id
+```
+
+### Why upload the image **before** creating or updating the post?
+
+Because the database stores only the **image ID**, not the image itself.
+
+```
+User selects image
+        │
+        ▼
+Upload image to Appwrite Storage
+        │
+        ▼
+Storage returns
+
+file.$id = "abc123"
+        │
+        ▼
+Save "abc123" in the post document
+```
+
+Later, when displaying the post, your app uses that `featuredImage` ID to fetch and display the actual image from Appwrite Storage. This keeps the database lightweight and lets the storage service handle the image files.

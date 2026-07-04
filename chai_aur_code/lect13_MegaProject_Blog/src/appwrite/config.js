@@ -1,11 +1,13 @@
 // this file is for configuring the database of apprwite and exporting the configuration to be used in other files
 
 import conf from '../conf/conf.js';
-import { Client, Databases, Storage } from 'appwrite';
+import { Client, Databases, Storage,ID } from 'appwrite';
+import { Query } from 'appwrite';
+
 
 export class DbServices{
     client=new Client(); // created an instance for this class
-    database;  // we will define it in constructor  reason ki jb koi user aaye aur appwrite ke is specific project se connect kre  tb hi account create ho us particular user k
+    databases;  // we will define it in constructor  reason ki jb koi user aaye aur appwrite ke is specific project se connect kre  tb hi account create ho us particular user k
     bucket; // storage bucket for file storage
 
     constructor(){
@@ -15,7 +17,7 @@ export class DbServices{
             .setProject(conf.appwriteProjectId);
         // ab client connect ho gya h 
         // database k instance creat krenge and current client obj pass kr denge 
-        this.database=new Databases(this.client);
+        this.databases=new Databases(this.client);
         this.bucket=new Storage(this.client);
     }
 
@@ -23,7 +25,15 @@ export class DbServices{
 
     async createPost({title,slug,content,Featuredimage,status,userId}){
         try{
-            return await this.database.createDocument(
+             console.log({
+        title,
+        slug,
+        content,
+        Featuredimage,
+        status,
+        userId
+    })
+            return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 slug,
@@ -42,7 +52,7 @@ export class DbServices{
 // we are using slug as the documentID 
     async updatePost(slug,{title,content,Featuredimage,status,userId}){
         try{
-            return await this.database.updateDocument( 
+            return await this.databases.updateDocument( 
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 slug,
@@ -61,7 +71,7 @@ export class DbServices{
 
     async deletePost(slug){
         try{
-            return await this.database.deleteDocument(
+            return await this.databases.deleteDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 slug
@@ -75,7 +85,7 @@ export class DbServices{
     // getting a single document by slug
     async getPost(slug){
         try{
-            return await this.database.getDocument(
+            return await this.databases.getDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 slug
@@ -89,8 +99,9 @@ export class DbServices{
     // ab ye methodsari documents(columns dedega vo bhi jiska status active bhi nhi h )
     // for this reason we need to provide the queries to filter the doucuments out 
     async getPosts(queries=[Query.equal("status","active")]){
+        
         try{
-            return await this.database.listDocuments(
+            return await this.databases.listDocuments(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
                 queries

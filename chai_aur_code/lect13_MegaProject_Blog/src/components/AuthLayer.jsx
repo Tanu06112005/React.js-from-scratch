@@ -6,7 +6,7 @@ export default function Protected({children, authentication = true}) {
 
     const navigate = useNavigate()
     const [loader, setLoader] = useState(true)
-    const authStatus = useSelector(state => state.auth.status)
+    const authStatus = useSelector(state => state.authreducers.status)
 
     useEffect(() => {
         //TODO: make it more easy to understand
@@ -19,6 +19,8 @@ export default function Protected({children, authentication = true}) {
         
         //let authValue = authStatus === true ? true : false
 
+
+        // main function ye h ki arg user authenticated h to home pe rediect kr do use else login krwao
         if(authentication && authStatus !== authentication){
             navigate("/login")
         } else if(!authentication && authStatus !== authentication){

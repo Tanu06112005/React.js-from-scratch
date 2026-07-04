@@ -11,7 +11,7 @@ import {Button,Input,Logo} from './index.js'
 
 const SignUp = () => {
     const [error, setError]=useState("")
-    const [register,handleSubmit]=useForm();
+    const {register,handleSubmit}=useForm();
     const dispatch=useDispatch()
     const navigate=useNavigate()
 
@@ -93,4 +93,4 @@ const SignUp = () => {
   )
 }
 
-export default Signup
+export default SignUp
