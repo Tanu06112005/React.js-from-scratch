@@ -195,6 +195,26 @@ lecture23: (chai aur code)
             contextAPI 
             using:
                     chai_aur_code>lec9_miniContext
+
+lecture24: (chai aur code)
+            contextAPI 
+            using:
+                    chai_aur_code>lec10_themeSwitcher
+
+lecture25: (sheryians)
+            redux Toolkit
+            using:
+                Sheryians/basics/reduxToolkit
+
+lecture26: (chai aur code)
+            reduc Toolkit
+            using:
+                chai_aur_code\reduxToolkitTodo
+
+lecture27: (chai aur code)
+            mega project
+            using:
+                chai_aur_code\lect13_MegaProject_Blog
                     
 
 
