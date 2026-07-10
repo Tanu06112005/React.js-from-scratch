@@ -8,7 +8,7 @@ const Home = () => {
     <div>
         <h1>Home Page</h1>
         <Link className='absolute top-35 left-70' to='/home/mens'>mens</Link>
-        <Link className='absolute top-35 left-88' to='/home/momens'>women</Link>
+        <Link className='absolute top-35 left-88' to='/home/womens'>women</Link>
     
     <Outlet />
 
