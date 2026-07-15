@@ -1,0 +1,25 @@
+1. create backend and frontend folders
+2. moveinto the backend folder and run 
+        npm init 
+        entry point> server.js
+        rest skip 
+        npm i express
+         create server.js file
+         create frontent file where by using axios get the data from the created backed 
+
+         initially when we run the frontend ile 
+                it will not be connected to the backend 
+                CORS(cross origin) error is displayed on the console
+                        the reason is that 
+                                the front is running on localhost 5173
+                                backend is running on 3000 local host 
+                                        hence server do not give permission to the request comming from the frontend(other origin)
+                                        (data is only shared to the one who has access (and the access is allowed to the the same origins ))
+                                                 
+                                                 to iske liye ab we have some methods /solution 
+                                                        1.) proxy : 
+                                                        2. )ya to fir bakend developer ko bolo ki whitelist kr default
+
+
+
+same origin means (application bhi same, url bhi same, port bhi same) sab same hona chahiye 
