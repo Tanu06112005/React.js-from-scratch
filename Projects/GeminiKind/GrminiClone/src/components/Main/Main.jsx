@@ -4,14 +4,14 @@ import { assets } from '../../assets/assets'
 import { Context } from '../../context/Context'
 const Main = () => {
  
-    const {onSent,recentPrompt,showResult,loading,resultData,setInput,input}=useContext(Context)
+    const {onSent,recentPrompt,showResult,loading,resultData,setInput,input,clickGemini}=useContext(Context)
 
 
   return (
     <div className='main'>
       
       <div className="nav">
-        <p>Gemini</p>
+        <p className="name" onClick={()=>clickGemini()}>Gemini</p>
         <img src={assets.user_icon} alt="" />
       </div>
 
@@ -64,13 +64,17 @@ const Main = () => {
 
          <div className="main-bottom">
             <div className="search-box">
-                <input  onChange={(e)=>setInput(e.target.value)} type="text" placeholder='Enter Your Prompt Here' />
+                <input  value={input} onChange={(e)=>setInput(e.target.value)} type="text" placeholder='Enter Your Prompt Here' />
                 <div>
                     <img src={assets.gallery_icon} alt="" />
                     <img src={assets.mic_icon} alt="" />
                     <img src={assets.send_icon} 
-                        onClick={()=>onSent()}
-                    alt="" />
+                        onClick={()=>{
+                            if(input!=="") {
+                                onSent()
+                            setInput("")}
+                        }}
+                        alt="" />
                 </div>
             </div>
             <p className="bottom-info">

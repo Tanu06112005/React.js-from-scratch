@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useState } from 'react'
 import { useEffect } from 'react'
+import Cards from './components/Cards'
 
 const App = () => {
 const [userData,setUserData]=useState([])
@@ -9,7 +10,7 @@ const [index,setIndex]=useState(1)
 
   const getData=async()=>{
     console.log("data aa gya")
-    const response=await axios.get(`https://picsum.photos/v2/list?page=${index}&limit=20`)
+    const response=await axios.get(`https://picsum.photos/v2/list?page=${index}&limit=15`)
     console.log(response.data)
     setUserData(response.data)
   }
@@ -52,7 +53,9 @@ useEffect(function(){
               } 
             }}
           >Prev</button>
+
           <p> Page {index} </p>
+
           <button className='h-15 w-20 bg-amber-400 px-4 text-2xl font-bold text-black py-2 cursor-pointer active:scale-95'
             onClick={()=>{
               setIndex(index+1)

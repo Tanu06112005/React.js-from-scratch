@@ -12,7 +12,7 @@ const ContextProvider =({children})=>{
     const [loading,setLoading]=useState(false)
     const [resultData,setResultData]=useState("")
    
-
+// typing effect:-
     const delayPara=(index,nextWord)=>{
             setTimeout(function(){
                 setResultData(prev=>prev+nextWord)
@@ -20,6 +20,10 @@ const ContextProvider =({children})=>{
     }
 
     const newChat=()=>{
+        setLoading(false)
+        setShowResult(false)
+    }
+    const clickGemini=()=>{
         setLoading(false)
         setShowResult(false)
     }
@@ -46,7 +50,7 @@ const ContextProvider =({children})=>{
         let responseArray=response.split('**')
         let newResponse="";
         for(let i=0;i<responseArray.length;i++){
-            if(i=== 0 || i%2!==1){
+            if(i=== 0 || i%2==0){
                 newResponse+=responseArray[i];
             }
             else{
@@ -85,7 +89,8 @@ const ContextProvider =({children})=>{
         resultData,
         input,
         setInput,
-        newChat
+        newChat,
+        clickGemini
     }
     return (
         <Context.Provider value={contextValue}>

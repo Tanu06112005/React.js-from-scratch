@@ -2,56 +2,57 @@ chai_aur_code + sheryians ke video and conceps ko mix krke dono playlist se i am
 
 
 
-lecture1:(learned about two types of creating the react app projects)
+lecture1: (chai_aur_code)
+(learned about two types of creating the react app projects)
     vite_latest
     vite_project
 
 
-lecture2:
+lecture2:(chai_aur_code)
     learned how work flows in the react 
     using 
         inspecting_how_react_works
 
 
-lecture3:
+lecture3:(chai_aur_code)
     why do we need hooks 
     counter project
     using
         lect3_hooks_counter_project
 
 
-lecture4:
+lecture4:(chai_aur_code)
     tailwind css import krna sihka & props sikha
     using 
         lect4_tailwindcss
 
 
-lecture5:
+lecture5:(chai_aur_code)
     project: for learning hoe to use tailwind css 
     using 
         lect5_bgChanger
 
 
-lecture6:
+lecture6:(sheryians)
     props project
     using
         sheryians>basics>props_project
 
 
-lecture7:
+lecture7:(sheryians)
     how to use tailwind and designing ui (practising react)
     using
         sheryians>projects>UI_project-tailwind
 
 
-lecture8:
+lecture8:(sheryians)
     learnong how functions are called and executed in the jsx and react on the application of an event
     event based function execution
     using 
         sheryians>basics>functions  
 
 
-lecture9:
+lecture9:(sheryians)
     form  default submit handeling : e.preventDefault()
     TWO WAY BINDING : 
     using:
@@ -98,19 +99,19 @@ and then the final input is set
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-lecture10:
+lecture10:(sheryians)
         notesAppProject based on the above two concepts(form submithandling + two way binding)
         using:
                 sheryians>projects>notesAppProject
 
 
-lecturre11:
+lecturre11:(sheryians)
         localStorage
         using:
                 sheryians>basics>localStorage
 
 
-lecture12:
+lecture12:(sheryians)
         API calling 
             i.  fetch API
             ii. axios (js library that helps th ereact application to communicate with the server,backend)
@@ -119,25 +120,25 @@ lecture12:
             sheryians>basics>apiCalling
 
 
-lecture13:
+lecture13:(sheryians)
         useEffect hooks
         using:
             sheryians>basics>useEffect-hooks
 
 
-lecture14:
+lecture14:(sheryians)
         gallery Project(based on useEffect)
         using:
              sheryians>projects>gallery-project
 
 
-lecture15:
+lecture15:(sheryians)
         react routing
         using:
         sheryians>basics>react-router-dom
 
 
-lecture16:
+lecture16:(sheryians)
         Advance routing
             404 page
             nested routing
@@ -146,10 +147,10 @@ lecture16:
             sheryians>basics>Advance_router
 
 
-lecture17,18:
+lecture17,18:(sheryians)
 
 
-lecture19:
+lecture19:(sheryians)
         context api 
 
 

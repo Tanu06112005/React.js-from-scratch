@@ -11,7 +11,8 @@ function App() {
   const AddValue=()=>{
 
     if(counter<20){
-      setCounter(counter+1);
+      setCounter(counter+1)
+      // setCounter(prev=>prev+counter);
     }
   }
   const ReduceValue=()=>{
@@ -43,5 +44,5 @@ export default App
 //  ko turant execute kar deta hai.
 
 
-// curley braces kyu lgaya:
+// curley braces kyu lgaya: to add javascript into it
 
